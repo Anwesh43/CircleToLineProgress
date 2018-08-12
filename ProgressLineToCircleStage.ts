@@ -4,6 +4,8 @@ class ProgressLineToCircleStage {
 
     canvas : HTMLCanvasElement = document.createElement('canvas')
     context : CanvasRenderingContext2D
+    lplc : LinkedPLC = new LinkedPLC()
+    animator : Animator = new Animator()
     constructor() {
         this.initCanvas()
         this.render()
@@ -20,11 +22,19 @@ class ProgressLineToCircleStage {
     render() {
         this.context.fillStyle = '#BDBDBD'
         this.context.fillRect(0, 0, w, h)
+        this.lplc.draw(this.context)
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lplc.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lplc.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
