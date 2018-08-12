@@ -20,7 +20,7 @@ class ProgressLineToCircleStage {
     }
 
     render() {
-        this.context.fillStyle = '#BDBDBD'
+        this.context.fillStyle = '#212121'
         this.context.fillRect(0, 0, w, h)
         this.lplc.draw(this.context)
     }
@@ -50,7 +50,7 @@ class State {
     prevScale : number = 0
 
     update(cb : Function) {
-        this.scale += 0.1 * this.dir
+        this.scale += 0.05 * this.dir
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -105,17 +105,18 @@ class PLCNode {
     }
 
     draw(context : CanvasRenderingContext2D) {
-        const gap : number = w / nodes
+        const gap : number = h / nodes
         const sc1 : number = Math.min(0.5, this.state.scale) * 2
         const sc2 : number = Math.min(0.5, Math.max(this.state.scale - 0.5, 0)) * 2
         context.lineWidth = Math.min(w, h) / 60
         context.lineCap = 'round'
         context.strokeStyle = 'white'
+        const factor : number = 1 - 2 * (this.i % 2)
         context.save()
-        context.translate(this.i * gap + gap/2, h/2 + h/5 * sc2)
+        context.translate(w/2 + w/5 * sc2 * factor, this.i * gap + gap/2)
         context.beginPath()
         for(var j = 0; j <= 360; j++) {
-            const x : number = (gap/2) * Math.cos(j * Math.PI/180)
+            const x : number = (gap/2) * sc1 * Math.cos(j * Math.PI/180)
             const y : number = (gap/2) * Math.sin(j * Math.PI/180)
             if (j == 0) {
                 context.moveTo(x, y)
@@ -125,6 +126,9 @@ class PLCNode {
         }
         context.stroke()
         context.restore()
+        if (this.next) {
+            this.next.draw(context)
+        }
     }
 
     update(cb : Function) {
@@ -150,7 +154,8 @@ class PLCNode {
 
 class LinkedPLC {
 
-    curr : PLCNode = new PLCNode(0)
+    root : PLCNode = new PLCNode(0)
+    curr : PLCNode = this.root
     dir : number = 1
 
     update(cb : Function) {
@@ -167,6 +172,6 @@ class LinkedPLC {
     }
 
     draw(context : CanvasRenderingContext2D) {
-        this.curr.draw(context)
+        this.root.draw(context)
     }
 }
