@@ -28,6 +28,7 @@ var ProgressLineToCircleStage = (function () {
                     _this.render();
                     _this.lplc.update(function () {
                         _this.animator.stop();
+                        _this.render();
                     });
                 });
             });

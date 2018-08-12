@@ -32,6 +32,7 @@ class ProgressLineToCircleStage {
                     this.render()
                     this.lplc.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
