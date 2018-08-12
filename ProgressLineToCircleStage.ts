@@ -127,7 +127,7 @@ class PLCNode {
 
     getNext(dir : number, cb : Function) {
         var curr : PLCNode = this.prev
-        if (this.dir == 1) {
+        if (dir == 1) {
             curr = this.next
         }
         if (curr) {
@@ -135,5 +135,28 @@ class PLCNode {
         }
         cb()
         return this
+    }
+}
+
+class LinkedPLC {
+
+    curr : PLCNode = new PLCNode(0)
+    dir : number = 1
+
+    update(cb : Function) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir,() => {
+                this.dir *= -1
+            })
+            cb()
+        })
+    }
+
+    startUpdating(cb : Function) {
+        this.curr.startUpdating(cb)
+    }
+
+    draw(context : CanvasRenderingContext2D) {
+        this.curr.draw(context)
     }
 }
